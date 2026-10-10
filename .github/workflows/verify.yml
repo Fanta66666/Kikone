@@ -40,9 +40,15 @@ jobs:
         run: flutter pub get
 
       # 只有真正的 error 才让 CI 失败；既有代码里的 warning/info 不阻断。
-      # 待代码库清理干净后，可去掉 --no-fatal-warnings 以启用更严格的门槛。
+      #
+      # 注意：flutter analyze 的 --fatal-warnings 与 --fatal-infos 默认都是「开启」的，
+      # 只写 --no-fatal-warnings 并不够——info 仍会让任务失败。本仓库既有代码里
+      # 还有若干 deprecated_member_use / prefer_initializing_formals 级别的 info
+      # （例如 onReorder、cacheExtent 在新版 Flutter 被弃用），属历史包袱，
+      # 不在当前改动范围内，因此这里显式把两类都关掉。
+      # 待代码库清理干净后，可去掉这两个参数以启用更严格的门槛。
       - name: Analyze
-        run: flutter analyze --no-fatal-warnings
+        run: flutter analyze --no-fatal-warnings --no-fatal-infos
 
   test:
     name: Unit & Widget Tests

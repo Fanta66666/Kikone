@@ -30,8 +30,27 @@ void main() {
         origin: 'https://example.com/ignored',
         remoteId: 7,
       );
-      final b = DeviceIdentity.remote(origin: 'example.com', remoteId: 7);
+      final b = DeviceIdentity.remote(
+        origin: 'https://example.com',
+        remoteId: 7,
+      );
       expect(a, equals(b));
+    });
+
+    test('缺少协议时按 http 补全，且大小写与结尾斜杠不影响结果', () {
+      // 注意：补全后协议是 http，与显式 https 不是同一个 origin，
+      // 因此这里只比较「同样缺少协议」的两种写法。
+      expect(
+        DeviceIdentity.remote(origin: 'EXAMPLE.com/', remoteId: 7),
+        equals(DeviceIdentity.remote(origin: 'example.com', remoteId: 7)),
+      );
+      // 协议不同必须是不同的 key，避免 http 与 https 站点互相污染。
+      expect(
+        DeviceIdentity.remote(origin: 'example.com', remoteId: 7),
+        isNot(equals(
+          DeviceIdentity.remote(origin: 'https://example.com', remoteId: 7),
+        )),
+      );
     });
 
     test('导入与下载使用独立命名空间，不与在线 key 混淆', () {
