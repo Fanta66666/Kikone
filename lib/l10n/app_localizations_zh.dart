@@ -9,7 +9,7 @@ class SZh extends S {
   SZh([String locale = 'zh']) : super(locale);
 
   @override
-  String get appTitle => 'KikoFlu';
+  String get appTitle => 'Kikone';
 
   @override
   String get navHome => '主页';
@@ -3686,7 +3686,7 @@ class SZhHant extends SZh {
   SZhHant() : super('zh_Hant');
 
   @override
-  String get appTitle => 'KikoFlu';
+  String get appTitle => 'Kikone';
 
   @override
   String get navHome => '首頁';

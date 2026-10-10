@@ -39,7 +39,7 @@ class KikoeruApiService {
             options.headers['Referer'] = 'https://www.asmr.one/';
             options.headers['Origin'] = 'https://www.asmr.one';
           } else {
-            options.headers['User-Agent'] = 'KikoFlu';
+            options.headers['User-Agent'] = 'Kikone';
           }
           // Dart HttpClient 默认支持 gzip，显式声明可确保服务器知晓
           options.headers['Accept-Encoding'] = 'gzip';

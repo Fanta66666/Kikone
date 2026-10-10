@@ -302,7 +302,7 @@ class ProxyConfig {
 
 /// 全局 HttpOverrides：让所有 dart:io HttpClient（包括 dio 底层、
 /// 音频流请求）统一走 [ProxyConfig] 指定的代理。
-class KikoFluHttpOverrides extends HttpOverrides {
+class KikoneHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
     final client = super.createHttpClient(context);

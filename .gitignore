@@ -93,20 +93,20 @@ app.*.map.json
 **/ios/ServiceDefinitions.json
 **/ios/Runner/GeneratedPluginRegistrant.*
 **/ios/build/
-**/KikoFlu-unsigned.ipa
+**/Kikone-unsigned.ipa
 
 # Exceptions to above rules.
 !**/ios/**/default.mode1v3
 !**/ios/**/default.mode2v3
 !**/ios/**/default.pbxuser
 !**/ios/**/default.perspectivev3
-KikoFlu-macOS.dmg
+Kikone-macOS.dmg
 /android/build/reports
 on_process.md
 
 # others
 kikoeru-express-alpha/
-KikoFlu_Key.pfx
+Kikone_Key.pfx
 
 # Code Graph index (local code-graph plugin artifact, not for version control)
 .codegraph/

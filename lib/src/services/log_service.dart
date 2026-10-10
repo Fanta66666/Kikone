@@ -156,7 +156,7 @@ class LogService {
 
   String exportAsText() {
     final buffer = StringBuffer();
-    buffer.writeln('=== KikoFlu Logs ===');
+    buffer.writeln('=== Kikone Logs ===');
     buffer.writeln('Exported: ${DateTime.now().toIso8601String()}');
     buffer.writeln(
         'Platform: ${Platform.operatingSystem} ${Platform.operatingSystemVersion}');

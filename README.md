@@ -1,7 +1,7 @@
 <div align="center">
-  <img src="assets/icons/app_icon_opaque.png" alt="KikoFlu" width="120" height="120">
+  <img src="assets/icons/app_icon_opaque.png" alt="Kikone" width="120" height="120">
 
-  # KikoFlu
+  # Kikone
 
   [English](README_EN.md) | [日本語](README_JA.md) | 简体中文
   
@@ -15,7 +15,7 @@
 </div>
 
 <div align="center">
-  <img src="screenshots/8.png" width="900" alt="KikoFlu 截图">
+  <img src="screenshots/8.png" width="900" alt="Kikone 截图">
 </div>
 
 ## 特性
@@ -83,15 +83,15 @@
 
 ## 下载
 
-前往 [Releases](https://github.com/pa-jesusf/KikoFlu/releases/latest) 下载最新版本。
+前往 [Releases](https://github.com/Fanta66666/Kikone/releases/latest) 下载最新版本。
 
 支持平台：Android（universal / arm64-v8a）、iOS（未签名 IPA）、Windows（安装包 / 便携版）、macOS（DMG）、Linux（x64 / arm64）
 
 ### AltStore / SideStore
 
-iOS 用户可通过 AltStore 或 SideStore 添加软件源来安装和更新 KikoFlu：
+iOS 用户可通过 AltStore 或 SideStore 添加软件源来安装和更新 Kikone：
 
-**源地址：** `https://raw.githubusercontent.com/pa-jesusf/KikoFlu/main/altstore-source.json`
+**源地址：** `https://raw.githubusercontent.com/Fanta66666/Kikone/main/altstore-source.json`
 
 ---
 
@@ -102,8 +102,8 @@ iOS 用户可通过 AltStore 或 SideStore 添加软件源来安装和更新 Kik
 - Dart SDK 3.12.1+
 
 ```bash
-git clone https://github.com/pa-jesusf/KikoFlu.git
-cd KikoFlu
+git clone https://github.com/Fanta66666/Kikone.git
+cd Kikone
 flutter pub get
 ```
 
@@ -130,7 +130,7 @@ flutter pub get
 
 ## 联系方式
 
-- **问题反馈**：[Issues](https://github.com/pa-jesusf/KikoFlu/issues)
+- **问题反馈**：[Issues](https://github.com/Fanta66666/Kikone/issues)
 - **交流群组**：[Telegram](https://t.me/+PrkiN-pZrXs4ZTU1)
 
 ---

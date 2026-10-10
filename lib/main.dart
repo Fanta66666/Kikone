@@ -256,7 +256,7 @@ void main(List<String> args) async {
 
   // 初始化代理配置，并让所有 HttpClient（API/下载/音频流）走代理
   await ProxyConfig.init();
-  HttpOverrides.global = KikoFluHttpOverrides();
+  HttpOverrides.global = KikoneHttpOverrides();
 
   // 初始化日志系统，拦截 print/debugPrint 输出
   setupLogCapture();

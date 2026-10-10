@@ -1,7 +1,7 @@
 <div align="center">
-  <img src="assets/icons/app_icon_opaque.png" alt="KikoFlu" width="120" height="120">
+  <img src="assets/icons/app_icon_opaque.png" alt="Kikone" width="120" height="120">
 
-  # KikoFlu
+  # Kikone
 
   English | [日本語](README_JA.md) | [简体中文](README.md)
   
@@ -15,7 +15,7 @@
 </div>
 
 <div align="center">
-  <img src="screenshots/8.png" width="900" alt="KikoFlu Screenshot">
+  <img src="screenshots/8.png" width="900" alt="Kikone Screenshot">
 </div>
 
 ## Features
@@ -83,15 +83,15 @@
 
 ## Download
 
-Go to [Releases](https://github.com/pa-jesusf/KikoFlu/releases/latest) for the latest version.
+Go to [Releases](https://github.com/Fanta66666/Kikone/releases/latest) for the latest version.
 
 Platforms: Android (universal / arm64-v8a), iOS (unsigned IPA), Windows (installer / portable), macOS (DMG), Linux (x64 / arm64)
 
 ### AltStore / SideStore
 
-iOS users can add the KikoFlu source to AltStore or SideStore for easy installation and updates:
+iOS users can add the Kikone source to AltStore or SideStore for easy installation and updates:
 
-**Source URL:** `https://raw.githubusercontent.com/pa-jesusf/KikoFlu/main/altstore-source.json`
+**Source URL:** `https://raw.githubusercontent.com/Fanta66666/Kikone/main/altstore-source.json`
 
 ---
 
@@ -102,8 +102,8 @@ iOS users can add the KikoFlu source to AltStore or SideStore for easy installat
 - Dart SDK 3.0+
 
 ```bash
-git clone https://github.com/pa-jesusf/KikoFlu.git
-cd KikoFlu
+git clone https://github.com/Fanta66666/Kikone.git
+cd Kikone
 flutter pub get
 ```
 
@@ -130,5 +130,5 @@ flutter pub get
 
 ## Contact
 
-- **Bug Reports**: [Issues](https://github.com/pa-jesusf/KikoFlu/issues)
+- **Bug Reports**: [Issues](https://github.com/Fanta66666/Kikone/issues)
 - **Community**: [Telegram](https://t.me/+PrkiN-pZrXs4ZTU1)

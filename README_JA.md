@@ -1,7 +1,7 @@
 <div align="center">
-  <img src="assets/icons/app_icon_opaque.png" alt="KikoFlu" width="120" height="120">
+  <img src="assets/icons/app_icon_opaque.png" alt="Kikone" width="120" height="120">
 
-  # KikoFlu
+  # Kikone
 
   [English](README_EN.md) | 日本語 | [简体中文](README.md)
   
@@ -15,7 +15,7 @@
 </div>
 
 <div align="center">
-  <img src="screenshots/8.png" width="900" alt="KikoFlu スクリーンショット">
+  <img src="screenshots/8.png" width="900" alt="Kikone スクリーンショット">
 </div>
 
 ## 機能
@@ -83,15 +83,15 @@
 
 ## ダウンロード
 
-最新バージョンは [Releases](https://github.com/pa-jesusf/KikoFlu/releases/latest) からダウンロードできます。
+最新バージョンは [Releases](https://github.com/Fanta66666/Kikone/releases/latest) からダウンロードできます。
 
 対応プラットフォーム：Android（universal / arm64-v8a）、iOS（未署名 IPA）、Windows（インストーラー / ポータブル）、macOS（DMG）、Linux（x64 / arm64）
 
 ### AltStore / SideStore
 
-iOS ユーザーは AltStore または SideStore にソースを追加して、KikoFlu を簡単にインストール・更新できます：
+iOS ユーザーは AltStore または SideStore にソースを追加して、Kikone を簡単にインストール・更新できます：
 
-**ソース URL：** `https://raw.githubusercontent.com/pa-jesusf/KikoFlu/main/altstore-source.json`
+**ソース URL：** `https://raw.githubusercontent.com/Fanta66666/Kikone/main/altstore-source.json`
 
 ---
 
@@ -102,8 +102,8 @@ iOS ユーザーは AltStore または SideStore にソースを追加して、K
 - Dart SDK 3.0+
 
 ```bash
-git clone https://github.com/pa-jesusf/KikoFlu.git
-cd KikoFlu
+git clone https://github.com/Fanta66666/Kikone.git
+cd Kikone
 flutter pub get
 ```
 
@@ -130,5 +130,5 @@ flutter pub get
 
 ## お問い合わせ
 
-- **バグ報告**：[Issues](https://github.com/pa-jesusf/KikoFlu/issues)
+- **バグ報告**：[Issues](https://github.com/Fanta66666/Kikone/issues)
 - **コミュニティ**：[Telegram](https://t.me/+PrkiN-pZrXs4ZTU1)
