@@ -10,7 +10,9 @@ import '../providers/audio_provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/device_library_provider.dart';
 import '../services/device_library_service.dart';
-import '../services/kikoeru_api_service.dart';
+// kikoeruApiServiceProvider 在 auth_provider.dart 与 kikoeru_api_service.dart
+// 各定义了一份，这里沿用仓库既有约定：从 auth_provider 取，hide 掉后者。
+import '../services/kikoeru_api_service.dart' hide kikoeruApiServiceProvider;
 import '../widgets/device_favorite_button.dart';
 import '../widgets/main_settings_action.dart';
 import 'work_detail_screen.dart';

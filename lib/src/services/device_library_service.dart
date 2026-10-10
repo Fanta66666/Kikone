@@ -48,10 +48,7 @@ class DeviceLibraryService {
 
   /// 应用持久根目录（导入副本的相对基准）。
   static Future<Directory> rootDirectory() async {
-    if (_rootDir == null) {
-      _rootDir = await getApplicationSupportDirectory();
-    }
-    return _rootDir!;
+    return _rootDir ??= await getApplicationSupportDirectory();
   }
 
   /// 将受控相对路径解析为绝对路径。
