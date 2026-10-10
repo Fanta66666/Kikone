@@ -7,13 +7,23 @@ import '../providers/audio_provider.dart';
 import '../providers/update_provider.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/main_bottom_navigation_bar.dart';
+import '../widgets/main_navigation_destinations.dart';
 import '../widgets/mini_player.dart';
 import '../widgets/liquid_glass_layout.dart';
+import '../widgets/main_settings_action.dart';
 import 'works_screen.dart';
 import 'search_screen.dart';
 import 'my_screen.dart';
 import 'settings_screen.dart';
+import 'login_screen.dart';
+import 'local_library_screen.dart';
+import 'device_favorites_screen.dart';
 import '../providers/settings_provider.dart';
+
+/// iOS 三入口结构：在线 / 本地 / 喜爱；其他平台保持原有四入口。
+///
+/// 判定逻辑见 [useIOSNavigationStructure]，刻意做成可被测试覆盖的形式。
+bool get _useIOSStructure => useIOSNavigationStructure();
 
 class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});
@@ -23,8 +33,11 @@ class MainScreen extends ConsumerStatefulWidget {
 }
 
 class _MainScreenState extends ConsumerState<MainScreen> {
-  int _currentIndex = 0;
+  late int _currentIndex;
   static const int _settingsTabIndex = 3;
+
+  /// iOS 上设置不再占用主入口，改为各页右上角入口。
+  bool get _hasSettingsTab => !_useIOSStructure;
 
   // 使用 PageStorageBucket 来保存页面状态
   final PageStorageBucket _bucket = PageStorageBucket();
@@ -35,12 +48,21 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   @override
   void initState() {
     super.initState();
-    _screens = const [
-      WorksScreen(key: PageStorageKey('works_screen')),
-      SearchScreen(key: PageStorageKey('search_screen')),
-      MyScreen(key: PageStorageKey('my_screen')),
-      SettingsScreen(key: PageStorageKey('settings_screen')),
-    ];
+    // iOS 无账号时默认落在「本地」；已有账号默认「在线」。
+    final hasAccount = ref.read(authProvider).currentUser != null;
+    _currentIndex = _useIOSStructure ? (hasAccount ? 0 : 1) : 0;
+    _screens = _useIOSStructure
+        ? const [
+            _OnlineTab(key: PageStorageKey('online_tab')),
+            LocalLibraryScreen(key: PageStorageKey('local_library_screen')),
+            DeviceFavoritesScreen(key: PageStorageKey('favorites_screen')),
+          ]
+        : const [
+            WorksScreen(key: PageStorageKey('works_screen')),
+            SearchScreen(key: PageStorageKey('search_screen')),
+            MyScreen(key: PageStorageKey('my_screen')),
+            SettingsScreen(key: PageStorageKey('settings_screen')),
+          ];
   }
 
   @override
@@ -51,35 +73,11 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
   List<NavigationDestination> _buildDestinations(
       BuildContext context, bool showUpdateBadge) {
-    final s = S.of(context);
-    return [
-      NavigationDestination(
-        icon: const Icon(Icons.home_outlined),
-        selectedIcon: const Icon(Icons.home),
-        label: s.navHome,
-      ),
-      NavigationDestination(
-        icon: const Icon(Icons.search_outlined),
-        selectedIcon: const Icon(Icons.search),
-        label: s.navSearch,
-      ),
-      NavigationDestination(
-        icon: const Icon(Icons.favorite_border),
-        selectedIcon: const Icon(Icons.favorite),
-        label: s.navMy,
-      ),
-      NavigationDestination(
-        icon: Badge(
-          isLabelVisible: showUpdateBadge,
-          child: const Icon(Icons.settings_outlined),
-        ),
-        selectedIcon: Badge(
-          isLabelVisible: showUpdateBadge,
-          child: const Icon(Icons.settings),
-        ),
-        label: s.navSettings,
-      ),
-    ];
+    return buildMainDestinations(
+      s: S.of(context),
+      useIOSStructure: _useIOSStructure,
+      showUpdateBadge: showUpdateBadge,
+    );
   }
 
   void _handleDestinationSelected(int index) {
@@ -91,7 +89,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       _currentIndex = index;
     });
 
-    if (index == _settingsTabIndex) {
+    if (_hasSettingsTab && index == _settingsTabIndex) {
       ref.read(settingsCacheRefreshTriggerProvider.notifier).state++;
     }
   }
@@ -319,6 +317,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
           fallbackGlassTransparency:
               ref.watch(fallbackGlassTransparencyProvider),
           showUpdateBadge: showUpdateBadge,
+          // iOS 三入口使用独立图标表；设置已移到右上角，红点不再落在导航栏。
+          itemIcons: _useIOSStructure ? kIOSNavIcons : kLegacyNavIcons,
+          updateBadgeIndex: _useIOSStructure ? -1 : null,
           onLayoutExtentChanged: (extent) {
             if (_liquidDockExtent.value != extent) {
               _liquidDockExtent.value = extent;
@@ -459,6 +460,71 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                 label: Text(dest.label),
               ))
           .toList(),
+    );
+  }
+}
+
+/// iOS「在线」入口。
+///
+/// 未登录（无任何账户）时只展示登录引导，避免 IndexedStack 预构建
+/// 在线页面而在无会话状态下触发在线接口。
+class _OnlineTab extends ConsumerWidget {
+  const _OnlineTab({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authProvider);
+
+    if (authState.currentUser != null) {
+      return const WorksScreen(key: PageStorageKey('works_screen'));
+    }
+
+    return const _OnlineLoginPrompt();
+  }
+}
+
+class _OnlineLoginPrompt extends StatelessWidget {
+  const _OnlineLoginPrompt();
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(s.navOnline),
+        actions: const [MainSettingsAction()],
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.cloud_off_outlined,
+                size: 56,
+                color: Theme.of(context).disabledColor,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                s.offlineModeMessage,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 20),
+              FilledButton.icon(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const LoginScreen()),
+                  );
+                },
+                icon: const Icon(Icons.login),
+                label: Text(s.login),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

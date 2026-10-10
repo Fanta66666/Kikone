@@ -132,6 +132,78 @@ abstract class S {
   /// **'Settings'**
   String get navSettings;
 
+  /// No description provided for @navOnline.
+  ///
+  /// In en, this message translates to:
+  /// **'Online'**
+  String get navOnline;
+
+  /// No description provided for @navLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'Local'**
+  String get navLocal;
+
+  /// No description provided for @navFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get navFavorites;
+
+  /// No description provided for @importAudioFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Import audio'**
+  String get importAudioFile;
+
+  /// No description provided for @importedAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported'**
+  String get importedAudio;
+
+  /// No description provided for @noImportedAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'No imported audio yet'**
+  String get noImportedAudio;
+
+  /// No description provided for @favoritesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No favorites yet'**
+  String get favoritesEmpty;
+
+  /// No description provided for @addFavorite.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to favorites'**
+  String get addFavorite;
+
+  /// No description provided for @removeFavorite.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from favorites'**
+  String get removeFavorite;
+
+  /// No description provided for @importedNFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported {count} file(s)'**
+  String importedNFiles(int count);
+
+  /// No description provided for @fileUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'File unavailable'**
+  String get fileUnavailable;
+
+  /// No description provided for @deleteImportConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this imported copy? The original file will not be affected.'**
+  String get deleteImportConfirm;
+
   /// No description provided for @offlineModeMessage.
   ///
   /// In en, this message translates to:

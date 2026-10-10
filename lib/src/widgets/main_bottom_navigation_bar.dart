@@ -3,6 +3,74 @@ import 'package:real_liquid_glass/real_liquid_glass.dart';
 
 import 'liquid_glass_layout.dart';
 
+/// 液态玻璃导航项的显式图标配置。
+///
+/// 显式传入可避免「只改标签、图标仍按旧索引硬编码」的问题，
+/// 例如 iOS 三入口结构下本地/喜爱会错误沿用搜索/设置图标。
+class MainBottomNavIcons {
+  const MainBottomNavIcons({
+    required this.icon,
+    required this.selectedIcon,
+    required this.sfSymbol,
+    required this.selectedSfSymbol,
+  });
+
+  final IconData icon;
+  final IconData selectedIcon;
+  final String sfSymbol;
+  final String selectedSfSymbol;
+}
+
+/// 旧的四入口图标（主页 / 搜索 / 我的 / 设置）。
+const List<MainBottomNavIcons> kLegacyNavIcons = [
+  MainBottomNavIcons(
+    icon: Icons.home_outlined,
+    selectedIcon: Icons.home,
+    sfSymbol: 'house',
+    selectedSfSymbol: 'house.fill',
+  ),
+  MainBottomNavIcons(
+    icon: Icons.search_outlined,
+    selectedIcon: Icons.search,
+    sfSymbol: 'magnifyingglass',
+    selectedSfSymbol: 'magnifyingglass',
+  ),
+  MainBottomNavIcons(
+    icon: Icons.favorite_border,
+    selectedIcon: Icons.favorite,
+    sfSymbol: 'heart',
+    selectedSfSymbol: 'heart.fill',
+  ),
+  MainBottomNavIcons(
+    icon: Icons.settings_outlined,
+    selectedIcon: Icons.settings,
+    sfSymbol: 'gearshape',
+    selectedSfSymbol: 'gearshape.fill',
+  ),
+];
+
+/// iOS 三入口图标（在线 / 本地 / 喜爱）。
+const List<MainBottomNavIcons> kIOSNavIcons = [
+  MainBottomNavIcons(
+    icon: Icons.public_outlined,
+    selectedIcon: Icons.public,
+    sfSymbol: 'globe',
+    selectedSfSymbol: 'globe',
+  ),
+  MainBottomNavIcons(
+    icon: Icons.folder_outlined,
+    selectedIcon: Icons.folder,
+    sfSymbol: 'folder',
+    selectedSfSymbol: 'folder.fill',
+  ),
+  MainBottomNavIcons(
+    icon: Icons.favorite_border,
+    selectedIcon: Icons.favorite,
+    sfSymbol: 'heart',
+    selectedSfSymbol: 'heart.fill',
+  ),
+];
+
 class MainBottomNavigationBar extends StatelessWidget {
   const MainBottomNavigationBar({
     super.key,
@@ -14,6 +82,8 @@ class MainBottomNavigationBar extends StatelessWidget {
     this.fallbackGlassTransparency = 0.4,
     this.showUpdateBadge = false,
     this.onLayoutExtentChanged,
+    this.itemIcons,
+    this.updateBadgeIndex,
   });
 
   static const double navigationBarHeight = 58;
@@ -27,6 +97,12 @@ class MainBottomNavigationBar extends StatelessWidget {
   final bool showUpdateBadge;
   final ValueChanged<double>? onLayoutExtentChanged;
 
+  /// 显式图标配置，长度应与 [destinations] 对应。
+  final List<MainBottomNavIcons>? itemIcons;
+
+  /// 更新红点落点索引；传 null 表示落在最后一项，传负数表示不显示。
+  final int? updateBadgeIndex;
+
   @override
   Widget build(BuildContext context) {
     if (liquidGlass) {
@@ -38,6 +114,8 @@ class MainBottomNavigationBar extends StatelessWidget {
         fallbackGlassTransparency: fallbackGlassTransparency,
         showUpdateBadge: showUpdateBadge,
         onLayoutExtentChanged: onLayoutExtentChanged,
+        itemIcons: itemIcons,
+        updateBadgeIndex: updateBadgeIndex,
       );
     }
 
@@ -66,6 +144,8 @@ class _LiquidGlassBottomNavigation extends StatelessWidget {
     required this.fallbackGlassTransparency,
     required this.showUpdateBadge,
     required this.onLayoutExtentChanged,
+    this.itemIcons,
+    this.updateBadgeIndex,
   });
 
   final int selectedIndex;
@@ -75,47 +155,30 @@ class _LiquidGlassBottomNavigation extends StatelessWidget {
   final double fallbackGlassTransparency;
   final bool showUpdateBadge;
   final ValueChanged<double>? onLayoutExtentChanged;
+  final List<MainBottomNavIcons>? itemIcons;
+  final int? updateBadgeIndex;
 
-  static const _items = [
-    (
-      icon: Icons.home_outlined,
-      selectedIcon: Icons.home,
-      sfSymbol: 'house',
-      selectedSfSymbol: 'house.fill',
-    ),
-    (
-      icon: Icons.search_outlined,
-      selectedIcon: Icons.search,
-      sfSymbol: 'magnifyingglass',
-      selectedSfSymbol: 'magnifyingglass',
-    ),
-    (
-      icon: Icons.favorite_border,
-      selectedIcon: Icons.favorite,
-      sfSymbol: 'heart',
-      selectedSfSymbol: 'heart.fill',
-    ),
-    (
-      icon: Icons.settings_outlined,
-      selectedIcon: Icons.settings,
-      sfSymbol: 'gearshape',
-      selectedSfSymbol: 'gearshape.fill',
-    ),
-  ];
+  List<MainBottomNavIcons> get _items {
+    final provided = itemIcons;
+    if (provided != null) return provided;
+    // 未显式提供时按旧的四入口图标表回退，保持既有平台行为不变。
+    return kLegacyNavIcons;
+  }
 
   List<LiquidGlassBarItem> _itemsForDestinations() {
+    final items = _items;
     return [
       for (var index = 0; index < destinations.length; index++)
         LiquidGlassBarItem(
-          icon: index < _items.length
-              ? _items[index].icon
+          icon: index < items.length
+              ? items[index].icon
               : Icons.circle_outlined,
-          selectedIcon: index < _items.length
-              ? _items[index].selectedIcon
+          selectedIcon: index < items.length
+              ? items[index].selectedIcon
               : Icons.circle,
-          sfSymbol: index < _items.length ? _items[index].sfSymbol : 'circle',
-          selectedSfSymbol: index < _items.length
-              ? _items[index].selectedSfSymbol
+          sfSymbol: index < items.length ? items[index].sfSymbol : 'circle',
+          selectedSfSymbol: index < items.length
+              ? items[index].selectedSfSymbol
               : 'circle.fill',
           label: destinations[index].label,
         ),
@@ -184,7 +247,12 @@ class _LiquidGlassBottomNavigation extends StatelessWidget {
                             child: bar,
                           );
 
-                    if (!showUpdateBadge || destinations.isEmpty) {
+                    final badgeIndex =
+                        updateBadgeIndex ?? (destinations.length - 1);
+                    if (!showUpdateBadge ||
+                        destinations.isEmpty ||
+                        badgeIndex < 0 ||
+                        badgeIndex >= destinations.length) {
                       return expandedBar;
                     }
 
@@ -195,7 +263,7 @@ class _LiquidGlassBottomNavigation extends StatelessWidget {
                         expandedBar,
                         Positioned(
                           top: 10,
-                          left: itemWidth * (destinations.length - 0.5) - 4,
+                          left: itemWidth * (badgeIndex + 0.5) - 4,
                           child: IgnorePointer(
                             child: Container(
                               width: 8,

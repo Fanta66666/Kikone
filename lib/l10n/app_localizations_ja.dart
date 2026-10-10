@@ -24,6 +24,45 @@ class SJa extends S {
   String get navSettings => '設定';
 
   @override
+  String get navOnline => 'オンライン';
+
+  @override
+  String get navLocal => 'ローカル';
+
+  @override
+  String get navFavorites => 'お気に入り';
+
+  @override
+  String get importAudioFile => '音声を読み込む';
+
+  @override
+  String get importedAudio => '読み込み済み';
+
+  @override
+  String get noImportedAudio => '読み込んだ音声はありません';
+
+  @override
+  String get favoritesEmpty => 'お気に入りはありません';
+
+  @override
+  String get addFavorite => 'お気に入りに追加';
+
+  @override
+  String get removeFavorite => 'お気に入りから削除';
+
+  @override
+  String importedNFiles(int count) {
+    return '$count 件のファイルを読み込みました';
+  }
+
+  @override
+  String get fileUnavailable => 'ファイルを利用できません';
+
+  @override
+  String get deleteImportConfirm =>
+      'この読み込み済みコピーを削除しますか？元のファイルは削除されません。';
+
+  @override
   String get offlineModeMessage =>
       'オフラインモード：ネットワーク接続に失敗しました。ダウンロード済みコンテンツのみアクセスできます';
 

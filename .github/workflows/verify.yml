@@ -1,0 +1,98 @@
+name: Verify
+
+# 目标：在没有 Mac 的情况下，用 GitHub 托管运行器验证代码。
+#   analyze     —— 静态分析（ubuntu，秒级）
+#   test        —— 单元 / Widget 测试（ubuntu，分钟级）
+#   ios-compile —— iOS 目标编译（macOS 运行器，验证 iOS 能否构建成功）
+#
+# 说明：仓库里已有的 build_test_only.yml 在 push 时也会构建 iOS 无签名包，
+# 但它同时会构建 Android / Windows / macOS / Linux，比较耗时。
+# 如果只想保留本工作流，可以把那个文件的 `on: push` 去掉，只留 workflow_dispatch。
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# 同一分支连续推送时取消上一次运行，避免浪费额度。
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.7'
+          channel: 'stable'
+          cache: true
+
+      - name: Get Dependencies
+        run: flutter pub get
+
+      # 只有真正的 error 才让 CI 失败；既有代码里的 warning/info 不阻断。
+      # 待代码库清理干净后，可去掉 --no-fatal-warnings 以启用更严格的门槛。
+      - name: Analyze
+        run: flutter analyze --no-fatal-warnings
+
+  test:
+    name: Unit & Widget Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.7'
+          channel: 'stable'
+          cache: true
+
+      - name: Get Dependencies
+        run: flutter pub get
+
+      # 注意：flutter test 运行在「宿主平台」上，即这里的 Linux。
+      # 因此被测代码若用 dart:io 的 Platform.isIOS 判断平台，iOS 分支不会被执行。
+      # 本仓库的 iOS 逻辑改用 defaultTargetPlatform，配合
+      # debugDefaultTargetPlatformOverride 可在 Linux 上真实覆盖 iOS 分支。
+      - name: Run Tests
+        run: flutter test --reporter expanded
+
+      - name: Upload Test Failures
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: test-failures
+          path: |
+            test/**/failures/**
+          if-no-files-found: ignore
+
+  ios-compile:
+    name: iOS Build (Unsigned)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.7'
+          channel: 'stable'
+          cache: true
+
+      - name: Get Dependencies
+        run: flutter pub get
+
+      # 只验证 iOS 目标能否编译，不做签名。
+      # 签名由用户自行处理，本步骤不接触证书、Team ID 或 Bundle ID。
+      - name: Build iOS (Unsigned)
+        run: flutter build ios --release --no-codesign

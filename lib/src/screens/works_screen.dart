@@ -1,6 +1,12 @@
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../providers/settings_provider.dart';
+import 'search_screen.dart';
+import 'settings_screen.dart';
+import 'my_screen.dart';
 import '../providers/works_provider.dart';
 import '../utils/scroll_optimization.dart';
 import '../widgets/sort_dialog.dart';
@@ -319,7 +325,46 @@ class _WorksScreenState extends ConsumerState<WorksScreen>
             : S.of(context).sort,
         onPressed: isRecommendMode ? null : () => _showSortDialog(context),
       ),
+      // iOS 三入口结构下，搜索并入在线页，设置移到右上角入口。
+      if (defaultTargetPlatform == TargetPlatform.iOS) ...[
+        FloatingFeedToolAction(
+          icon: Icons.search,
+          tooltip: S.of(context).navSearch,
+          onPressed: () => _openSearch(context),
+        ),
+        FloatingFeedToolAction(
+          icon: Icons.bookmarks_outlined,
+          tooltip: S.of(context).navMy,
+          onPressed: () => _openOnlineProfile(context),
+        ),
+        FloatingFeedToolAction(
+          icon: Icons.settings_outlined,
+          tooltip: S.of(context).navSettings,
+          onPressed: () => _openSettings(context),
+        ),
+      ],
     ];
+  }
+
+  void _openSearch(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const SearchScreen()),
+    );
+  }
+
+  /// iOS：打开「我的」，保留在线标记、历史、官方播放列表、
+  /// 已下载与字幕库等原有入口，避免导航调整造成能力回退。
+  void _openOnlineProfile(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const MyScreen()),
+    );
+  }
+
+  void _openSettings(BuildContext context) {
+    ref.read(settingsCacheRefreshTriggerProvider.notifier).state++;
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const SettingsScreen()),
+    );
   }
 
   Widget _buildBody(WorksState worksState, EdgeInsetsGeometry padding) {

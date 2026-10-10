@@ -24,6 +24,45 @@ class SEn extends S {
   String get navSettings => 'Settings';
 
   @override
+  String get navOnline => 'Online';
+
+  @override
+  String get navLocal => 'Local';
+
+  @override
+  String get navFavorites => 'Favorites';
+
+  @override
+  String get importAudioFile => 'Import audio';
+
+  @override
+  String get importedAudio => 'Imported';
+
+  @override
+  String get noImportedAudio => 'No imported audio yet';
+
+  @override
+  String get favoritesEmpty => 'No favorites yet';
+
+  @override
+  String get addFavorite => 'Add to favorites';
+
+  @override
+  String get removeFavorite => 'Remove from favorites';
+
+  @override
+  String importedNFiles(int count) {
+    return 'Imported $count file(s)';
+  }
+
+  @override
+  String get fileUnavailable => 'File unavailable';
+
+  @override
+  String get deleteImportConfirm =>
+      'Delete this imported copy? The original file will not be affected.';
+
+  @override
   String get offlineModeMessage =>
       'Offline mode: Network connection failed, only downloaded content is accessible';
 

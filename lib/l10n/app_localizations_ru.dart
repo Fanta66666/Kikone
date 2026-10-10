@@ -24,6 +24,45 @@ class SRu extends S {
   String get navSettings => 'Настройки';
 
   @override
+  String get navOnline => 'Онлайн';
+
+  @override
+  String get navLocal => 'Локальные';
+
+  @override
+  String get navFavorites => 'Избранное';
+
+  @override
+  String get importAudioFile => 'Импорт аудио';
+
+  @override
+  String get importedAudio => 'Импортировано';
+
+  @override
+  String get noImportedAudio => 'Импортированного аудио пока нет';
+
+  @override
+  String get favoritesEmpty => 'Избранного пока нет';
+
+  @override
+  String get addFavorite => 'Добавить в избранное';
+
+  @override
+  String get removeFavorite => 'Удалить из избранного';
+
+  @override
+  String importedNFiles(int count) {
+    return 'Импортировано файлов: $count';
+  }
+
+  @override
+  String get fileUnavailable => 'Файл недоступен';
+
+  @override
+  String get deleteImportConfirm =>
+      'Удалить импортированную копию? Исходный файл не будет удалён.';
+
+  @override
   String get offlineModeMessage =>
       'Автономный режим: нет подключения к сети, доступен только загруженный контент';
 

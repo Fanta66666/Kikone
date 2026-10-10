@@ -24,6 +24,44 @@ class SZh extends S {
   String get navSettings => '设置';
 
   @override
+  String get navOnline => '在线';
+
+  @override
+  String get navLocal => '本地';
+
+  @override
+  String get navFavorites => '喜爱';
+
+  @override
+  String get importAudioFile => '导入音频';
+
+  @override
+  String get importedAudio => '已导入';
+
+  @override
+  String get noImportedAudio => '暂无已导入音频';
+
+  @override
+  String get favoritesEmpty => '暂无喜爱内容';
+
+  @override
+  String get addFavorite => '加入喜爱';
+
+  @override
+  String get removeFavorite => '取消喜爱';
+
+  @override
+  String importedNFiles(int count) {
+    return '已导入 $count 个文件';
+  }
+
+  @override
+  String get fileUnavailable => '文件不可用';
+
+  @override
+  String get deleteImportConfirm => '确定删除这个导入副本吗？原始文件不会被删除。';
+
+  @override
   String get offlineModeMessage => '离线模式：网络连接失败，仅可访问下载内容';
 
   @override
@@ -3661,6 +3699,44 @@ class SZhHant extends SZh {
 
   @override
   String get navSettings => '設定';
+
+  @override
+  String get navOnline => '線上';
+
+  @override
+  String get navLocal => '本機';
+
+  @override
+  String get navFavorites => '喜愛';
+
+  @override
+  String get importAudioFile => '匯入音訊';
+
+  @override
+  String get importedAudio => '已匯入';
+
+  @override
+  String get noImportedAudio => '尚無已匯入音訊';
+
+  @override
+  String get favoritesEmpty => '尚無喜愛內容';
+
+  @override
+  String get addFavorite => '加入喜愛';
+
+  @override
+  String get removeFavorite => '取消喜愛';
+
+  @override
+  String importedNFiles(int count) {
+    return '已匯入 $count 個檔案';
+  }
+
+  @override
+  String get fileUnavailable => '檔案無法使用';
+
+  @override
+  String get deleteImportConfirm => '確定刪除這個匯入副本嗎？原始檔案不會被刪除。';
 
   @override
   String get offlineModeMessage => '離線模式：網路連線失敗，僅可存取已下載內容';

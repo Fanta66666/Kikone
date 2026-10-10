@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,7 +8,9 @@ import 'package:url_launcher/url_launcher.dart';
 import '../utils/snackbar_util.dart';
 import '../../l10n/app_localizations.dart';
 
+import '../models/device_library.dart';
 import '../models/work.dart';
+import '../widgets/device_favorite_button.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/scrollable_appbar.dart';
 import '../services/work_track_file_builder.dart';
@@ -495,9 +499,32 @@ class _WorkDetailScreenState extends ConsumerState<WorkDetailScreen> {
               isLoading: _isUpdatingProgress,
               onPressed: _showProgressDialog,
             ),
+            // iOS：本机统一收藏（独立于服务器标记，不触发任何在线请求）。
+            if (defaultTargetPlatform == TargetPlatform.iOS)
+              _buildDeviceFavoriteAction(),
           ],
         ),
         body: _buildBody(),
+      ),
+    );
+  }
+
+  Widget _buildDeviceFavoriteAction() {
+    final authState = ref.watch(authProvider);
+    final host = authState.host ?? '';
+    final token = authState.token ?? '';
+    final origin = DeviceIdentity.normalizeOrigin(host);
+    final work = widget.work;
+
+    return DeviceFavoriteButton(
+      favorite: DeviceFavorite(
+        key: DeviceIdentity.remote(origin: origin, remoteId: work.id),
+        source: DeviceItemSource.online,
+        title: work.title,
+        coverUrl: work.getCoverImageUrl(host, token: token),
+        origin: origin,
+        remoteId: work.id,
+        createdAt: DateTime.now(),
       ),
     );
   }

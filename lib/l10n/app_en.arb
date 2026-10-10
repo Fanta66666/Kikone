@@ -7,6 +7,25 @@
   "navSearch": "Search",
   "navMy": "My",
   "navSettings": "Settings",
+  "navOnline": "Online",
+  "navLocal": "Local",
+  "navFavorites": "Favorites",
+  "importAudioFile": "Import audio",
+  "importedAudio": "Imported",
+  "noImportedAudio": "No imported audio yet",
+  "favoritesEmpty": "No favorites yet",
+  "addFavorite": "Add to favorites",
+  "removeFavorite": "Remove from favorites",
+  "importedNFiles": "Imported {count} file(s)",
+  "@importedNFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "fileUnavailable": "File unavailable",
+  "deleteImportConfirm": "Delete this imported copy? The original file will not be affected.",
 
   "offlineModeMessage": "Offline mode: Network connection failed, only downloaded content is accessible",
   "retry": "Retry",

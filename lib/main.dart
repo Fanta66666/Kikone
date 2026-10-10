@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,6 +27,7 @@ import 'src/services/storage_service.dart';
 import 'src/services/proxy_config.dart';
 import 'src/services/account_database.dart';
 import 'src/services/cache_service.dart';
+import 'src/services/device_library_service.dart';
 import 'src/services/download_service.dart';
 import 'src/services/audio_haptics_service.dart';
 import 'src/services/floating_lyric_service.dart';
@@ -319,6 +322,11 @@ void main(List<String> args) async {
   }
   await StorageService.init();
 
+  // 设备本地资料库（统一收藏 + 导入音频索引）。
+  // 独立持久盒，不随账号切换或缓存清理而丢失。
+  await DeviceLibraryService.init();
+  unawaited(DeviceLibraryService.cleanupOrphanImports());
+
   // Initialize account database
   await AccountDatabase.instance.database;
 
@@ -555,8 +563,15 @@ class _KikoeruAppState extends ConsumerState<KikoeruApp>
   Widget _buildHomeScreen() {
     final authState = ref.watch(authProvider);
 
-    // 如果有用户信息（包括离线模式），显示主页
-    // 这样用户可以访问本地下载的内�?
+    // iOS：即使没有任何账号也进入主壳，默认落在「本地」，
+    // 保证离线导入与播放不被登录页阻挡；在线入口内部提供登录引导。
+    // 使用 defaultTargetPlatform 以便测试可模拟 iOS（真机取值一致）。
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      return const MainScreen();
+    }
+
+    // 其他平台保持原有行为：有用户信息（含离线模式）才进入主壳，
+    // 这样用户可以访问本地下载的内容。
     if (authState.currentUser != null) {
       return const MainScreen();
     } else {
