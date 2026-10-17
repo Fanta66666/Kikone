@@ -1,0 +1,125 @@
+name: Release iOS
+
+# 只做 iOS 的发布通道：打 tag 即自动出无签名 IPA 并发布 Release。
+#
+# 为什么单独建一个而不复用 build.yml：
+#   build.yml 是 workflow_dispatch 专用的「全平台发布」，会同时构建
+#   Android / Windows / macOS / Linux x64 / Linux ARM64 / iOS 共 6 个平台，
+#   一次约 30 分钟；而本项目当前只在 iOS 上做定制，日常发版只需要 iOS 包。
+#   build.yml 保持原样不动，需要全平台时仍可手动触发它。
+#
+# 签名由使用者自行处理：本工作流只产出未签名的 ipa，
+# 不接触证书、Team ID、Bundle ID 或任何签名密钥。
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '版本号，例如 3.9.0（不需要写 v 前缀）'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-ios-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  ios-release:
+    name: iOS Build & Release
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Resolve Version
+        id: version
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            raw="${GITHUB_REF_NAME}"
+          else
+            raw="${INPUT_VERSION}"
+          fi
+
+          version="${raw#v}"
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::版本号必须是 MAJOR.MINOR.PATCH 形式，例如 3.9.0"
+            exit 1
+          fi
+
+          # 382 这种后缀用于产物文件名，与既有 build.yml 的命名保持一致。
+          suffix="$(echo "$version" | tr -d '.')"
+
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "tag=v$version" >> "$GITHUB_OUTPUT"
+          echo "suffix=$suffix" >> "$GITHUB_OUTPUT"
+          echo "版本 $version / tag v$version / 后缀 $suffix"
+
+      # 把 pubspec 的 version 对齐到本次发布版本，并带上 build number，
+      # 保证 iOS 的 CFBundleVersion 随版本递增（AltStore 更新时需要）。
+      - name: Set Application Version
+        run: |
+          set -euo pipefail
+          sed -i.bak -E \
+            "s/^version: .*/version: ${{ steps.version.outputs.version }}+${{ steps.version.outputs.suffix }}/" \
+            pubspec.yaml
+          rm -f pubspec.yaml.bak
+          grep -n '^version:' pubspec.yaml
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.7'
+          channel: 'stable'
+          cache: true
+
+      - name: Get Dependencies
+        run: flutter pub get
+
+      - name: Build iOS (Unsigned)
+        run: flutter build ios --release --no-codesign
+
+      - name: Package IPA
+        run: |
+          set -euo pipefail
+          rm -rf build/Payload dist
+          mkdir -p build/Payload dist
+          cp -R build/ios/iphoneos/Runner.app build/Payload/
+          (cd build && zip -qr \
+            "$GITHUB_WORKSPACE/dist/Kikone-ios-unsigned_${{ steps.version.outputs.suffix }}.ipa" \
+            Payload)
+          ls -lh dist/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: Kikone ${{ steps.version.outputs.version }}
+          files: dist/Kikone-ios-unsigned_${{ steps.version.outputs.suffix }}.ipa
+          fail_on_unmatched_files: true
+          body: |
+            ## Kikone ${{ steps.version.outputs.version }}（iOS，未签名）
+
+            **这是未签名的 ipa，不能直接安装**，需要用你自己的签名方式处理：
+            AltStore / SideStore、Sideloadly、ESign、TrollStore，或自签证书。
+
+            ### 本次改动
+            - iOS 主导航调整为「在线 / 本地 / 喜爱」三入口，其他平台保持原四入口
+            - 新增本机统一收藏：在线作品、已下载作品、导入音频共用同一套心形收藏
+            - 新增音频导入：支持 mp3 / m4a / aac / wav，可多选，副本保存在应用持久目录
+            - 搜索并入「在线」页，设置移到各页右上角
+            - 应用对外名称由 KikoFlu 改为 Kikone
+
+            ### 与服务器数据的关系
+            本机收藏独立于服务器端的「想听 / 在听 / 听过」标记，切换账号或清理缓存都不会丢失。
+
+            ### 已知限制
+            首版导入只支持直接音频文件，暂不支持压缩包、文件夹与视频容器。
