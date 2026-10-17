@@ -1,12 +1,21 @@
 name: Build test
 
 on:
+  # 只对分支推送触发；不加 branches 过滤时 tag 推送也会命中，
+  # 导致打 tag 时多跑一轮 6 平台构建。
   push:
-  
+    branches:
+      - '**'
+
   workflow_dispatch:
 
 permissions:
   contents: read
+
+# 同一分支连续推送时取消上一次运行，避免堆积多轮全平台构建。
+concurrency:
+  group: build-test-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   android:

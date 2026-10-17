@@ -10,7 +10,11 @@ name: Verify
 # 如果只想保留本工作流，可以把那个文件的 `on: push` 去掉，只留 workflow_dispatch。
 
 on:
+  # 只对分支推送触发。不加 branches 过滤时 tag 推送也会命中，
+  # 导致打 tag 时本工作流被重复触发一遍（tag 的验证由 Release iOS 负责）。
   push:
+    branches:
+      - '**'
   pull_request:
   workflow_dispatch:
 
